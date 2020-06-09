@@ -20,10 +20,29 @@ def cube_vertices(x, y, z, n):
 
 def bomberman_vertices(x, y, z, vert_coods):
     adjusted_coords = []
-    for vertex in vert_coods:
+    for idx, vertex in enumerate(vert_coods):
+        '''
+        if idx == 0:
+            adjusted_coords.append(vertex + x)
+        if idx == 1:
+            adjusted_coords.append(vertex + y)
+        if idx == 2:
+            adjusted_coords.append(vertex + z)
+        '''
+        zbytek = idx % 3
+        if zbytek == 0:
+            adjusted_coords.append(vertex + x)
+        if zbytek == 1:
+            adjusted_coords.append(vertex + y)
+        if zbytek == 2:
+            adjusted_coords.append(vertex + z)
+        '''
         adjusted_coords.append(float(vertex[0])+x)
         adjusted_coords.append(float(vertex[1])+y)
         adjusted_coords.append(float(vertex[2]) + z)
+        '''
+    print(adjusted_coords)
+    print(str(len(adjusted_coords))+ 'here')
     return adjusted_coords
 
 

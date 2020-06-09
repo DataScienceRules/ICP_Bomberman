@@ -29,6 +29,7 @@ FACES = [
 ]
 
 TEXTURE_PATH = 'texture.png'
+SECOND_TEXTURE_PATH = 'C:/Users/Krystof/PycharmProjects/ICP/bomberman.jpg'
 
 BOMB_STARTING_RANGE = 3
 BOMB_TIMESPAN_SECS = 3

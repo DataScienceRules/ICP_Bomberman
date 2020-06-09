@@ -3,8 +3,8 @@ from venv.src import game_field
 from venv.src.basic_helpers import cube_vertices, get_int_from_float, bomberman_vertices
 from venv.src.game_config import BOMB_STARTING_RANGE, BOMB_TIMESPAN_SECS
 from venv.src.bomb import Bomb
-#from venv.src.ObjLoader import vert_coords as
-vertex_data = __import__("ObjLoader").ObjLoader.vert_coords
+from venv.src.ObjLoader import Model
+
 
 
 
@@ -17,10 +17,12 @@ class BaseFigure:
         self.placed_bombs = 0
         self.hit = False
         self.previous_direction = None
+        self.loader = Model()
 
     def recalculate_vertices(self):
         if self.gl_object is not None:
-            self.gl_object.vertices = bomberman_vertices(self.position_x, 0, self.position_z, vertex_data)
+            self.gl_object.vertices = bomberman_vertices(self.position_x, 0, self.position_z,
+                                                         self.loader.bomberman.vert_coords_dupli)
 
     def place_bomb(self):
         if self.placed_bombs < self.bomb_count:

@@ -14,6 +14,9 @@ class ObjLoader:
         self.normal_index = []
 
         self.model = []
+        self.vert_coords_dupli = []
+        self.text_coords_dupli = []
+        self.norm_coords_dupli = []
         self.c_model = None
 
     def load_model(self, file):
@@ -48,12 +51,22 @@ class ObjLoader:
 
         for i in self.vertex_index:
             self.model.extend(self.vert_coords[i])
+            self.vert_coords_dupli.extend(self.vert_coords[i])
+        for i, v in enumerate(self.vert_coords_dupli):
+            self.vert_coords_dupli[i] = float(v)
 
         for i in self.texture_index:
             self.model.extend(self.text_coords[i])
+            self.text_coords_dupli.extend(self.text_coords[i])
+        for i, v in enumerate(self.text_coords_dupli):
+            self.text_coords_dupli[i] = float(v)
+
+        print(self.text_coords_dupli)
+        print(len(self.text_coords_dupli))
 
         for i in self.normal_index:
             self.model.extend(self.norm_coords[i])
+            self.norm_coords_dupli.extend(self.norm_coords[i])
 
         self.model = np.array(self.model, dtype='float32')
 
@@ -66,6 +79,9 @@ class Model:
         self.bomberman = ObjLoader()
         self.bomberman.load_model("C:/Users/Krystof/PycharmProjects/ICP/bomberman.obj")
 
+
+
+        '''
         self.vertex_shader_source = b"""
                 #version 330
                 in layout(location = 0) vec3 positions;
@@ -85,9 +101,9 @@ class Model:
                     textures = vec2(textureCoords.x, 1 - textureCoords.y);
                 }
                 """
-        '''
+        
 
-        '''
+        
         self.fragment_shader_source = b"""
                 #version 330
                 in vec2 textures;
@@ -164,16 +180,25 @@ class Model:
 
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        
 
-        bomberman_texture = pyglet.image.load('C:/Users/Krystof/PycharmProjects/ICP/bomberman.jpg')
+        image_stream = open('C:/Users/Krystof/PycharmProjects/ICP/bomberman.jpg', "rb")
+        bomberman_texture = pyglet.image.load(filename="bomberman.jpg", file=image_stream)
+        texture = bomberman_texture.get_texture()
+        glBindTexture(GL_TEXTURE_2D, texture.id)
+        glEnable(GL_TEXTURE_2D)
+
         image_data = bomberman_texture.get_data('RGB', bomberman_texture.pitch)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bomberman_texture.width, bomberman_texture.height, 0, GL_RGB,
                      GL_UNSIGNED_BYTE, image_data)
+        '''
 
+
+        '''
         view = pyrr.matrix44.create_from_translation(pyrr.Vector3([0.0, 0.0, -3.0])).flatten()
         projection = pyrr.matrix44.create_perspective_projection_matrix(45.0, 1280 / 720, 0.1, 100.0).flatten()
         model = pyrr.matrix44.create_from_translation(pyrr.Vector3([0.0, 0.5, -2.0])).flatten()
-
+        
         c_view = (GLfloat * len(view))(*view)
         c_projection = (GLfloat * len(projection))(*projection)
         c_model = (GLfloat * len(model))(*model)
@@ -190,20 +215,23 @@ class Model:
         #self.rot_y = pyrr.Matrix44.identity()
 
         #rot_y = pyrr.Matrix44.identity()
+        '''
 
-
+loader = ObjLoader()
 global vertex_data
-self.vertex_data = self.bomberman.vert_coords  # cube_vertices(x, 0, z, 0.25)
-vertexdata = ObjLoader.vert_coords
+#self.vertex_data = self.bomberman.vert_coords  # cube_vertices(x, 0, z, 0.25)
+vertex_data = loader.vert_coords
 
 global texture_data_flat
-texture_data = self.bomberman.text_coords  # list(BRICK)
+texture_data = loader.text_coords
+#texture_data = self.bomberman.text_coords  # list(BRICK)
 texture_data_flat = []
 for one in texture_data:
     texture_data_flat.append(float(one[0]))
     texture_data_flat.append(float(one[1]))
 
-vertex_normals = self.bomberman.norm_coords
+#vertex_normals = self.bomberman.norm_coords
+vertex_normals = []
 vertex_normals_flat = []
 for one in vertex_normals:
     vertex_normals_flat.append(float(one[0]))

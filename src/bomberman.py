@@ -8,12 +8,39 @@ from venv.src.game_field import GameField
 from venv.src.game_config import *
 from venv.src.tracing_helper import TracingHelper
 
+materialAmbient = [1.0, 0.0, 0.0, 1.0]
+materialDiffuse = [0.0, 0.0, 0.0, 0.0]
+lightPosition = [10.0, 10.0, 20.0, 0.0]
 
 class Window(pyglet.window.Window):
+
+    def float_array(self, list):
+        return (GLfloat * len(list))(*list)
+
+    def set_material(self):
+        materialAmbient_gl = self.float_array(materialAmbient)
+        materialDiffuse_gl = self.float_array(materialDiffuse)
+
+        glMaterialfv(GL_FRONT, GL_AMBIENT, materialAmbient_gl)
+        glMaterialfv(GL_FRONT, GL_AMBIENT, materialDiffuse_gl)
+
+    def set_light(self):
+        lightPosition_gl = (GLfloat * len(lightPosition))(*lightPosition)
+
+        glLightfv(GL_LIGHT0, GL_POSITION, lightPosition_gl)
+        glEnable(GL_LIGHTING)
+        glEnable(GL_LIGHT0)
 
     def __init__(self, *args, **kwargs):
         super(Window, self).__init__(*args, **kwargs)
         glEnable(GL_DEPTH_TEST)
+
+        glDepthFunc(GL_LESS)
+        glShadeModel(GL_SMOOTH)
+        glPointSize(3.0)
+
+        self.set_material()
+        self.set_light()
 
         # Whether or not the window exclusively captures the mouse.
         self.exclusive = False
@@ -550,8 +577,8 @@ class Window(pyglet.window.Window):
         self.set_2d()
         self.draw_label()
         self.status.draw()
-        glDrawArrays(GL_TRIANGLES, 0, len(self.figure_model.bomberman.vertex_index))
-        print("draw call")
+        #glDrawArrays(GL_TRIANGLES, 0, len(self.figure_model.bomberman.vertex_index))
+        #print("draw call")
 
     def draw_label(self):
         """ Draw the label in the top left of the screen.
@@ -563,6 +590,8 @@ class Window(pyglet.window.Window):
 
         self.label.draw()
 
+    #Phong lightning attempt
+
 
 def opengl_setup():
     """ Basic OpenGL configuration.
@@ -572,6 +601,10 @@ def opengl_setup():
     # Enable culling (not rendering) of back-facing facets -- facets that aren't
     # visible to you.
     glEnable(GL_CULL_FACE)
+    shadeModel = GL_SMOOTH
+
+
+
     # Set the texture minification/magnification function to GL_NEAREST (nearest
     # in Manhattan distance) to the specified texture coordinates. GL_NEAREST
     # "is generally faster than GL_LINEAR, but it can produce textured images
@@ -582,7 +615,7 @@ def opengl_setup():
 
 
 def main():
-    window = Window(width=1920, height=1080, caption='Bomberman', resizable=True, fullscreen=True)
+    window = Window(width=1920, height=1080, caption='Bomberman', resizable=True, fullscreen=False)
     # Hide the mouse cursor and prevent the mouse from leaving the window.
     window.set_exclusive_mouse(True)
     opengl_setup()
